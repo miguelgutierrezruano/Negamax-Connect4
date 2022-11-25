@@ -96,7 +96,7 @@ public class GameState
 
     public bool Suspend()
     {
-        return (Board.IsFinished || Ply == Negamax.MaxPly);
+        return (Board.IsFinished || Ply == NegamaxAB.MaxPly);
     }
 
     public int Evaluate()

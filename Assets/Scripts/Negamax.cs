@@ -5,7 +5,7 @@ using System.Linq;
 
 public class Negamax
 {
-    public static int MaxPly = 2;
+    public static int MaxPly = 3;
     public static int Counter = 0;
 
     public static int CallNegamax(Board board)
@@ -28,7 +28,6 @@ public class Negamax
 
             int candValue = -NegamaxValue(cand);
             evaluatedActions.Add(i, candValue);
-            Debug.Log("For " + i + " action, value is: " + candValue);
         }
 
         // Return action to execute
