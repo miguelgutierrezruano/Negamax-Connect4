@@ -91,7 +91,6 @@ public class GameState
     public void Simulate(int column)
     {
         Board.AddToken(column, (Ply % 2 == 0) ? Player.MAX : Player.MIN);
-
     }
 
     public bool Suspend()
@@ -107,6 +106,25 @@ public class GameState
             if (Board.HasWinMax()) return +1000;
             if (Board.HasWinMin()) return -1000;
         }
+
+        int gameStateValue = 0;
+
+        // Iterate columns
+        for (int i = 0; i < 8; i++)
+        {
+            // Skip empty columns
+            if (Board.IsEmpty(i)) continue;
+
+            // Iterate rows of column
+            for (int j = 0; j < 7; j++)
+            {
+                // Skip empty cells
+                if (Board.Columns[i, j] != Player.NONE) continue;
+
+
+            }
+        }
+
 
         // Get something better than this to evaluate states
         var rand = new Random();

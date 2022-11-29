@@ -63,7 +63,7 @@ public class BoardControl : MonoBehaviour {
 
 }
 
-public enum Player { NONE, MAX, MIN}
+public enum Player { NONE, MAX, MIN }
 
 public class Board
 {
