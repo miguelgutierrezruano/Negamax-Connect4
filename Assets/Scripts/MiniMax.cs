@@ -119,16 +119,34 @@ public class GameState
             for (int j = 0; j < 7; j++)
             {
                 // Skip empty cells
-                if (Board.Columns[i, j] != Player.NONE) continue;
+                if (Board.Columns[i, j] == Player.NONE) continue;
 
-
+                gameStateValue += SearchPlayVertical(Board.Columns[i, j], i, j);
             }
         }
 
+        return gameStateValue;
+    }
 
-        // Get something better than this to evaluate states
-        var rand = new Random();
-        return rand.Next(-100,100);
+    private int SearchPlayVertical(Player player, int x, int y)
+    {
+        int upPlay = 0;
+        int downPlay = 0;
+
+        SearchInSteps(player, ref upPlay, 0, x, y, 0, 1);
+        SearchInSteps(player, ref downPlay, 0, x, y, 0, -1);
+
+        return upPlay + downPlay;
+    }
+
+    // Increment value of play recursively
+    private void SearchInSteps(Player player, ref int value, int distanceFromStart, int x, int y, int xStep, int yStep)
+    {
+        // Stop if reached limit
+        if (distanceFromStart >= 4)
+            return;
+
+        //switch()
     }
 
     //Null is invalid action.
