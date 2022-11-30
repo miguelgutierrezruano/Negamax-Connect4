@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 public class MiniMax
 {
@@ -122,6 +123,9 @@ public class GameState
                 if (Board.Columns[i, j] == Player.NONE) continue;
 
                 gameStateValue += SearchPlayVertical(Board.Columns[i, j], i, j);
+                //gameStateValue += SearchPlayHorizontal(Board.Columns[i, j], i, j);
+                //gameStateValue += SearchPlayDiagonalDown(Board.Columns[i, j], i, j);
+                //gameStateValue += SearchPlayDiagonalUp(Board.Columns[i, j], i, j);
             }
         }
 
@@ -139,14 +143,89 @@ public class GameState
         return upPlay + downPlay;
     }
 
+    private int SearchPlayHorizontal(Player player, int x, int y)
+    {
+        int leftPlay = 0;
+        int rightPlay = 0;
+
+        SearchInSteps(player, ref leftPlay, 0, x, y, -1, 0);
+        SearchInSteps(player, ref rightPlay, 0, x, y, 1, 0);
+
+        return leftPlay + rightPlay;
+    }
+
+    private int SearchPlayDiagonalDown(Player player, int x, int y)
+    {
+        int leftPlay = 0;
+        int rightPlay = 0;
+
+        SearchInSteps(player, ref leftPlay, 0, x, y, -1, -1);
+        SearchInSteps(player, ref rightPlay, 0, x, y, 1, 1);
+
+        return leftPlay + rightPlay;
+    }
+
+    private int SearchPlayDiagonalUp(Player player, int x, int y)
+    {
+        int leftPlay = 0;
+        int rightPlay = 0;
+
+        SearchInSteps(player, ref leftPlay, 0, x, y, -1, 1);
+        SearchInSteps(player, ref rightPlay, 0, x, y, 1, -1);
+
+        return leftPlay + rightPlay;
+    }
+
     // Increment value of play recursively
     private void SearchInSteps(Player player, ref int value, int distanceFromStart, int x, int y, int xStep, int yStep)
     {
+        // Increment distance from start
+        ++distanceFromStart;
+
         // Stop if reached limit
         if (distanceFromStart >= 4)
             return;
 
-        //switch()
+        // Discard imposible cases
+        if(x + xStep < 0 || x + xStep >= 8)
+        {
+            value = 0;
+            return;
+        }
+        if(y + yStep < 0 || y + yStep >= 7)
+        {
+            value = 0;
+            return;
+        }
+
+        // No se mete aqui ni a ostias
+        Debug.Log(Board.Columns[x + xStep, y + yStep]);
+
+        // If next is free
+        if(Board.Columns[x + xStep, y + yStep] == Player.NONE)
+        {
+            // No adjacents
+            if (distanceFromStart == 1)
+                value = 0;
+            // Line of two not blocked
+            else if (distanceFromStart == 2)
+                value = player == Player.MAX ? 5 : -5;
+            // Line of three not blocked
+            else if (distanceFromStart == 3)
+                value = player == Player.MAX ? 20 : -20;
+            return;
+        }
+        // If next is a potential line keep expanding 
+        else if(Board.Columns[x + xStep, y + yStep] == player)
+        {
+            SearchInSteps(player, ref value, distanceFromStart, x + xStep, y + yStep, xStep, yStep);
+        }
+        // Next is enemy so line is blocked
+        else
+        {
+            value = 0;
+            return;
+        }
     }
 
     //Null is invalid action.

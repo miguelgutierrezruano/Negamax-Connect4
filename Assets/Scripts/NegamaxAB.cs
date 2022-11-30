@@ -35,6 +35,8 @@ public class NegamaxAB : MonoBehaviour
             int candValue = -NegamaxValueAB(cand, alpha, beta);
             evaluatedActions.Add(i, candValue);
 
+            Debug.Log("For play: " + i + " value is: " + candValue);
+
             // Update alpha
             if (candValue > alpha)
                 alpha = candValue;
