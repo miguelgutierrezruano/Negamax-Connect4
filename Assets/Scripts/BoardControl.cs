@@ -54,10 +54,10 @@ public class BoardControl : MonoBehaviour {
     private int CallAlgorithm()
     {
         //var column = MiniMax.CallMiniMax(TheBoard);
-        //var column = Negamax.CallNegamax(TheBoard);
-        var column = NegamaxAB.CallNegamaxAB(TheBoard);
-        Debug.Log($"Column Selected {column} : Nodes = {NegamaxAB.Counter}");
-        NegamaxAB.Counter = 0;
+        var column = Negamax.CallNegamax(TheBoard);
+        //var column = NegamaxAB.CallNegamaxAB(TheBoard);
+        Debug.Log($"Column Selected {column} : Nodes = {Negamax.Counter}");
+        Negamax.Counter = 0;
         return column;
     }
 

@@ -159,8 +159,8 @@ public class GameState
         int leftPlay = 0;
         int rightPlay = 0;
 
-        leftPlay += SearchInSteps(player, 0, x, y, -1, -1);
-        rightPlay += SearchInSteps(player, 0, x, y, 1, 1);
+        leftPlay += SearchInSteps(player, 0, x, y, -1, 1);
+        rightPlay += SearchInSteps(player, 0, x, y, 1, -1);
 
         return leftPlay + rightPlay;
     }
@@ -170,8 +170,8 @@ public class GameState
         int leftPlay = 0;
         int rightPlay = 0;
 
-        leftPlay += SearchInSteps(player, 0, x, y, -1, 1);
-        rightPlay += SearchInSteps(player, 0, x, y, 1, -1);
+        leftPlay += SearchInSteps(player, 0, x, y, -1, -1);
+        rightPlay += SearchInSteps(player, 0, x, y, 1, 1);
 
         return leftPlay + rightPlay;
     }
@@ -181,10 +181,6 @@ public class GameState
     {
         // Increment distance from start
         ++distanceFromStart;
-
-        // Stop if reached limit
-        //if (distanceFromStart >= 4)
-        //    return;
 
         // Discard imposible cases
         if(x + xStep < 0 || x + xStep >= 8)
@@ -200,14 +196,15 @@ public class GameState
                 return 0;
             // Line of two not blocked
             else if (distanceFromStart == 2)
-                return player == Player.MAX ? 5 : -5;
+                return player == Player.MAX ? 20 : -20;
             // Line of three not blocked
             else if (distanceFromStart == 3)
-                return player == Player.MAX ? 20 : -20;
+                return player == Player.MAX ? 100 : -100;
         }
         // If next is a potential line keep expanding 
         else if(Board.Columns[x + xStep, y + yStep] == player)
         {
+            
             return SearchInSteps(player, distanceFromStart, x + xStep, y + yStep, xStep, yStep);
         }
 
