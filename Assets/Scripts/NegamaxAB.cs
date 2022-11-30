@@ -5,7 +5,7 @@ using System.Linq;
 
 public class NegamaxAB : MonoBehaviour
 {
-    public static int MaxPly = 3;
+    public static int MaxPly = 5;
     public static int Counter = 0;
 
     private const int INFINITE = int.MaxValue;
