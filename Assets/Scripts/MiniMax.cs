@@ -96,7 +96,7 @@ public class GameState
 
     public bool Suspend()
     {
-        return (Board.IsFinished || Ply == NegamaxAB.MaxPly);
+        return (Board.IsFinished || Ply == 3);
     }
 
     public int Evaluate()
@@ -113,8 +113,7 @@ public class GameState
         // Iterate columns
         for (int i = 0; i < 8; i++)
         {
-            // Skip empty columns
-            if (Board.IsEmpty(i)) continue;
+            // Skip empty columns makes it dumb
 
             // Iterate rows of column
             for (int j = 0; j < 7; j++)
@@ -137,8 +136,8 @@ public class GameState
         int upPlay = 0;
         int downPlay = 0;
 
-        upPlay += SearchInSteps(player, 0, x, y, 0, 1);
-        downPlay += SearchInSteps(player, 0, x, y, 0, -1);
+        upPlay += SearchInSteps(player, 0, x, y, 0, -1);
+        downPlay += SearchInSteps(player, 0, x, y, 0, 1);
 
         return upPlay + downPlay;
     }
@@ -159,8 +158,8 @@ public class GameState
         int leftPlay = 0;
         int rightPlay = 0;
 
-        leftPlay += SearchInSteps(player, 0, x, y, -1, 1);
-        rightPlay += SearchInSteps(player, 0, x, y, 1, -1);
+        leftPlay += SearchInSteps(player, 0, x, y, -1, -1);
+        rightPlay += SearchInSteps(player, 0, x, y, 1, 1);
 
         return leftPlay + rightPlay;
     }
@@ -170,8 +169,8 @@ public class GameState
         int leftPlay = 0;
         int rightPlay = 0;
 
-        leftPlay += SearchInSteps(player, 0, x, y, -1, -1);
-        rightPlay += SearchInSteps(player, 0, x, y, 1, 1);
+        leftPlay += SearchInSteps(player, 0, x, y, -1, 1);
+        rightPlay += SearchInSteps(player, 0, x, y, 1, -1);
 
         return leftPlay + rightPlay;
     }
@@ -204,12 +203,11 @@ public class GameState
         // If next is a potential line keep expanding 
         else if(Board.Columns[x + xStep, y + yStep] == player)
         {
-            
             return SearchInSteps(player, distanceFromStart, x + xStep, y + yStep, xStep, yStep);
         }
 
-        // Next is enemy so line is blocked
-        return 0;
+        // Next is enemy
+        return player == Player.MAX ? -5 : 5;
     }
 
     //Null is invalid action.
