@@ -96,7 +96,7 @@ public class GameState
 
     public bool Suspend()
     {
-        return (Board.IsFinished || Ply == 3);
+        return (Board.IsFinished || Ply == 4);
     }
 
     public int Evaluate()
@@ -113,7 +113,8 @@ public class GameState
         // Iterate columns
         for (int i = 0; i < 8; i++)
         {
-            // Skip empty columns makes it dumb
+            // Skip empty columns
+            if(Board.Columns[i, 0] == Player.NONE) continue;
 
             // Iterate rows of column
             for (int j = 0; j < 7; j++)
@@ -136,8 +137,8 @@ public class GameState
         int upPlay = 0;
         int downPlay = 0;
 
-        upPlay += SearchInSteps(player, 0, x, y, 0, -1);
-        downPlay += SearchInSteps(player, 0, x, y, 0, 1);
+        upPlay += SearchInSteps(player, 0, x, y, 0, 1);
+        downPlay += SearchInSteps(player, 0, x, y, 0, -1);
 
         return upPlay + downPlay;
     }
@@ -158,8 +159,8 @@ public class GameState
         int leftPlay = 0;
         int rightPlay = 0;
 
-        leftPlay += SearchInSteps(player, 0, x, y, -1, -1);
-        rightPlay += SearchInSteps(player, 0, x, y, 1, 1);
+        leftPlay += SearchInSteps(player, 0, x, y, -1, 1);
+        rightPlay += SearchInSteps(player, 0, x, y, 1, -1);
 
         return leftPlay + rightPlay;
     }
@@ -169,8 +170,8 @@ public class GameState
         int leftPlay = 0;
         int rightPlay = 0;
 
-        leftPlay += SearchInSteps(player, 0, x, y, -1, 1);
-        rightPlay += SearchInSteps(player, 0, x, y, 1, -1);
+        leftPlay += SearchInSteps(player, 0, x, y, -1, -1);
+        rightPlay += SearchInSteps(player, 0, x, y, 1, 1);
 
         return leftPlay + rightPlay;
     }
