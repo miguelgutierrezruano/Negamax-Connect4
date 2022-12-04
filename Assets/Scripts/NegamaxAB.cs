@@ -10,12 +10,9 @@ public class NegamaxAB : MonoBehaviour
     private const int INFINITE = int.MaxValue;
     private const int MINUS_INFINITE = int.MinValue;
 
-    public static int CallNegamaxAB(Board board)
+    public static KeyValuePair<int, int> CallNegamaxAB(Board board, int alpha = MINUS_INFINITE, int beta = INFINITE)
     {
         GameState initState = new GameState(board, 0);
-
-        int alpha = MINUS_INFINITE;
-        int beta = INFINITE;
 
         // Expand node
         var candidates = initState.CreateCandidates();
@@ -40,7 +37,7 @@ public class NegamaxAB : MonoBehaviour
         }
 
         // Return action to execute
-        return GetBestPlay(evaluatedActions);
+        return GetBestPair(evaluatedActions);
     }
 
     private static int NegamaxValueAB(GameState state, int alpha, int beta)
@@ -81,8 +78,8 @@ public class NegamaxAB : MonoBehaviour
         return nodeValue;
     }
 
-    private static int GetBestPlay(Dictionary<int, int> actionsDictionary)
+    private static KeyValuePair<int, int> GetBestPair(Dictionary<int, int> actionsDictionary)
     {
-        return actionsDictionary.FirstOrDefault(x => x.Value == actionsDictionary.Values.Max()).Key;
+        return actionsDictionary.FirstOrDefault(x => x.Value == actionsDictionary.Values.Max());
     }
 }

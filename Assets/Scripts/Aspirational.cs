@@ -23,7 +23,7 @@ public class Aspirational : MonoBehaviour
         }
         else
         {
-            bestPlay = NegamaxAB.CallNegamaxAB(board);
+            //bestPlay = NegamaxAB.CallNegamaxAB(board);
         }
 
         return bestPlay;

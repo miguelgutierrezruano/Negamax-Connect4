@@ -129,7 +129,7 @@ public class BoardControl : MonoBehaviour {
                 break;
 
             case Algorithms.NegamaxAB:
-                column = NegamaxAB.CallNegamaxAB(TheBoard);
+                column = NegamaxAB.CallNegamaxAB(TheBoard).Key;
                 Debug.Log($"Column Selected {column} : Nodes = {NegamaxAB.Counter}");
                 NegamaxAB.Counter = 0;
 
