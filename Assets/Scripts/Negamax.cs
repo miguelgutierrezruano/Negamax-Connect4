@@ -5,7 +5,6 @@ using System.Linq;
 
 public class Negamax
 {
-    public static int MaxPly = 3;
     public static int Counter = 0;
 
     public static int CallNegamax(Board board)

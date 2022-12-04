@@ -7,7 +7,6 @@ using UnityEngine;
 
 public class MiniMax
 {
-    public static int MaxPly = 2;
     private static int BestAction;
 
     public static int Counter = 0;
@@ -96,7 +95,7 @@ public class GameState
 
     public bool Suspend()
     {
-        return (Board.IsFinished || Ply == 4);
+        return (Board.IsFinished || Ply == BoardControl.algorithmDepth);
     }
 
     public int Evaluate()

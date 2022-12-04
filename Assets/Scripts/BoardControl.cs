@@ -31,6 +31,7 @@ public class BoardControl : MonoBehaviour {
     [SerializeField] Algorithms minAlgorithm;
     [SerializeField] GameModes  gameMode;
     [SerializeField] uint       gamesToPlay;
+    [HideInInspector] public static uint algorithmDepth = 4;
 
     private uint gameCounter;
 
