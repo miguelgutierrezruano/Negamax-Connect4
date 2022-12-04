@@ -17,7 +17,8 @@ public class BoardControl : MonoBehaviour {
     [SerializeField] enum Algorithms
     {
         Negamax,
-        NegamaxAB
+        NegamaxAB,
+        Aspirational
     }
 
     [SerializeField] enum GameModes
@@ -130,6 +131,13 @@ public class BoardControl : MonoBehaviour {
 
             case Algorithms.NegamaxAB:
                 column = NegamaxAB.CallNegamaxAB(TheBoard).Key;
+                Debug.Log($"Column Selected {column} : Nodes = {NegamaxAB.Counter}");
+                NegamaxAB.Counter = 0;
+
+                break;
+
+            case Algorithms.Aspirational:
+                column = Aspirational.CallAspirationalSearch(TheBoard);
                 Debug.Log($"Column Selected {column} : Nodes = {NegamaxAB.Counter}");
                 NegamaxAB.Counter = 0;
 

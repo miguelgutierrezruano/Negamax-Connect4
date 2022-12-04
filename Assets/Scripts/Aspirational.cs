@@ -15,17 +15,32 @@ public class Aspirational : MonoBehaviour
     {
         int alpha = MINUS_INFINITE;
         int beta = INFINITE;
-        int bestPlay = 0;
+        KeyValuePair<int, int> playValuePair;
 
         if (previousScore != 0)
         {
+            alpha = previousScore - windowRange;
+            beta  = previousScore + windowRange;
 
+            while(true)
+            {
+                playValuePair = NegamaxAB.CallNegamaxAB(board, alpha, beta);
+                if (playValuePair.Value <= alpha)
+                    alpha = MINUS_INFINITE;
+                else if (playValuePair.Value >= beta)
+                    beta = INFINITE;
+                else
+                    break;
+            }
+
+            previousScore = playValuePair.Value;
         }
         else
         {
-            //bestPlay = NegamaxAB.CallNegamaxAB(board);
+            playValuePair = NegamaxAB.CallNegamaxAB(board);
+            previousScore = playValuePair.Value;
         }
 
-        return bestPlay;
+        return playValuePair.Key;
     }
 }
