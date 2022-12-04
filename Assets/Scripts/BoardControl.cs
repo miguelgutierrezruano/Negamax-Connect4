@@ -13,14 +13,36 @@ public class BoardControl : MonoBehaviour {
     public Text TurnText;
     public Text Result;
     public GameObject Buttons;
+
+    [SerializeField] enum Algorithms
+    {
+        Negamax,
+        NegamaxAB
+    }
+
+    [SerializeField] enum GameModes
+    {
+        PlayervsIA,
+        IAvsIA
+    }
+
+    [Header("Settings")]
+    [SerializeField] Algorithms maxAlgorithm;
+    [SerializeField] Algorithms minAlgorithm;
+    [SerializeField] GameModes  gameMode;
+    [SerializeField] uint       gamesToPlay;
+
+    private uint gameCounter;
+
     // Use this for initialization
     void Start () {
         TheBoard = new Board();
         PlayerTurn = Player.MAX;
+        gameCounter = 0;
 	}
 	
     public int AddToken(int column) {
-        if (TheBoard.IsEmpty(column))
+        if (TheBoard.HasEmptyCells(column))
         {
             var res = TheBoard.AddToken(column, PlayerTurn);
             PlayerTurn = (PlayerTurn == Player.MAX) ? Player.MIN : Player.MAX;
@@ -32,13 +54,27 @@ public class BoardControl : MonoBehaviour {
     private void Update()
     {
         TurnText.text = PlayerTurn.ToString();
-        if (PlayerTurn == Player.MAX)
-        {
-            int columnSelected = CallAlgorithm();
-            int row = AddToken(columnSelected);
-            var TheGridTokens = FindObjectOfType<GridTokens>();
-            TheGridTokens.TokenControls[columnSelected, row].SetPlayer(Player.MAX);
 
+        if(gameMode == GameModes.PlayervsIA)
+        {
+            if (PlayerTurn == Player.MAX)
+            {
+                int columnSelected = CallAlgorithm(PlayerTurn);
+                int row = AddToken(columnSelected);
+                var TheGridTokens = FindObjectOfType<GridTokens>();
+                TheGridTokens.TokenControls[columnSelected, row].SetPlayer(Player.MAX);
+            }
+        }
+        else
+        {
+            if(!IsFinished)
+            {
+                Buttons.SetActive(false);
+                int columnSelected = CallAlgorithm(PlayerTurn);
+                int row = AddToken(columnSelected);
+                var TheGridTokens = FindObjectOfType<GridTokens>();
+                TheGridTokens.TokenControls[columnSelected, row].SetPlayer(PlayerTurn);
+            }
         }
 
         if (IsFinished)
@@ -47,20 +83,60 @@ public class BoardControl : MonoBehaviour {
             Result.gameObject.SetActive(true);
             Result.text = $"{TheWinner.ToString()} Wins";
             TurnText.gameObject.SetActive(false);
+
+            ++gameCounter;
+            if(gameCounter < gamesToPlay && gameMode == GameModes.IAvsIA)
+            {
+                // Clean UI
+                var TheGridTokens = FindObjectOfType<GridTokens>();
+                foreach (var token in TheGridTokens.TokenControls)
+                    token.SetNone();
+
+                // Clean values
+                for (var i = 0; i < 8; i++)
+                {
+                    for (var j = 0; j < 7; j++)
+                    {
+                        TheBoard.Columns[i, j] = Player.NONE;
+                    }
+                }
+
+                TheBoard.IsFinished = false;
+            }
         }
-        
     }
 
-    private int CallAlgorithm()
+    private int CallAlgorithm(Player _playerTurn)
     {
-        //var column = MiniMax.CallMiniMax(TheBoard);
-        //var column = Negamax.CallNegamax(TheBoard);
-        var column = NegamaxAB.CallNegamaxAB(TheBoard);
-        Debug.Log($"Column Selected {column} : Nodes = {NegamaxAB.Counter}");
-        NegamaxAB.Counter = 0;
+        if (_playerTurn == Player.MAX)
+            return FilterAlgorithm(maxAlgorithm);
+        else
+            return FilterAlgorithm(minAlgorithm);
+    }
+
+    private int FilterAlgorithm(Algorithms aiAlgorithm)
+    {
+        int column = 0;
+
+        switch (aiAlgorithm)
+        {
+            case Algorithms.Negamax:
+                column = Negamax.CallNegamax(TheBoard);
+                Debug.Log($"Column Selected {column} : Nodes = {Negamax.Counter}");
+                Negamax.Counter = 0;
+
+                break;
+
+            case Algorithms.NegamaxAB:
+                column = NegamaxAB.CallNegamaxAB(TheBoard);
+                Debug.Log($"Column Selected {column} : Nodes = {NegamaxAB.Counter}");
+                NegamaxAB.Counter = 0;
+
+                break;
+        }
+
         return column;
     }
-
 }
 
 public enum Player { NONE, MAX, MIN }
@@ -81,9 +157,14 @@ public class Board
         IsFinished = false;
     }
 
-    public bool IsEmpty(int column)
+    public bool HasEmptyCells(int column)
     {
         return Columns[column, 6] == Player.NONE;
+    }
+
+    public bool IsEmpty(int column)
+    {
+        return Columns[column, 0] == Player.NONE;
     }
 
     public int AddToken(int column, Player ply)

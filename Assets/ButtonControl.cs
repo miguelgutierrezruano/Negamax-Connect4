@@ -17,7 +17,7 @@ public class ButtonControl : MonoBehaviour {
 	
 	public void AddToken()
     {
-        if (TheBoardControl.TheBoard.IsEmpty(ColumnId))
+        if (TheBoardControl.TheBoard.HasEmptyCells(ColumnId))
         {
             var currentPlayer= TheBoardControl.PlayerTurn;
             

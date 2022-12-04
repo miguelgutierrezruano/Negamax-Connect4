@@ -28,8 +28,6 @@ public class Negamax
 
             int candValue = -NegamaxValue(cand);
             evaluatedActions.Add(i, candValue);
-
-            Debug.Log("For play: " + i + " value is: " + candValue);
         }
 
         // Return action to execute

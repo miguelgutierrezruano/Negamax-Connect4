@@ -114,7 +114,7 @@ public class GameState
         for (int i = 0; i < 8; i++)
         {
             // Skip empty columns
-            if(Board.Columns[i, 0] == Player.NONE) continue;
+            if(Board.IsEmpty(i)) continue;
 
             // Iterate rows of column
             for (int j = 0; j < 7; j++)
@@ -217,7 +217,7 @@ public class GameState
         var res = new GameState[8];
         for (int i = 0; i < 8; i++)
         {
-            if (!Board.IsEmpty(i))
+            if (!Board.HasEmptyCells(i))
             {
                 res[i] = null;
                 continue;
