@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class BoardControl : MonoBehaviour {
    
@@ -13,6 +14,8 @@ public class BoardControl : MonoBehaviour {
     public Text TurnText;
     public Text Result;
     public GameObject Buttons;
+
+    private bool shownStats;
 
     [SerializeField] enum Algorithms
     {
@@ -36,12 +39,20 @@ public class BoardControl : MonoBehaviour {
     [HideInInspector] public static uint algorithmDepth = 4;
 
     private uint gameCounter;
+    private uint maxWins;
+    private uint minWins;
+    private uint ties;
 
     // Use this for initialization
     void Start () {
         TheBoard = new Board();
         PlayerTurn = Player.MAX;
         gameCounter = 0;
+        maxWins = 0;
+        minWins = 0;
+        ties    = 0; 
+
+        shownStats = false;
 	}
 	
     public int AddToken(int column) {
@@ -87,6 +98,21 @@ public class BoardControl : MonoBehaviour {
             Result.text = $"{TheWinner.ToString()} Wins";
             TurnText.gameObject.SetActive(false);
 
+            switch(TheWinner)
+            {
+                case Player.NONE:
+                    ties++;
+                    break;
+
+                case Player.MAX:
+                    maxWins++;
+                    break;
+
+                case Player.MIN:
+                    minWins++;
+                    break;
+            }
+
             ++gameCounter;
             if(gameCounter < gamesToPlay && gameMode == GameModes.IAvsIA)
             {
@@ -104,7 +130,18 @@ public class BoardControl : MonoBehaviour {
                     }
                 }
 
+                // Reset aspirational value
+                Aspirational.previousScore = 0;
                 TheBoard.IsFinished = false;
+            }
+            else if(gameCounter >= gamesToPlay && !shownStats)
+            {
+                //NegamaxShowStats();
+                //NegamaxABShowStats();
+                //AspirationalSearchStats();
+                //NegaScoutShowStats();
+                ShowWinners();
+                shownStats = true;
             }
         }
     }
@@ -125,34 +162,162 @@ public class BoardControl : MonoBehaviour {
         {
             case Algorithms.Negamax:
                 column = Negamax.CallNegamax(TheBoard);
-                Debug.Log($"Column Selected {column} : Nodes = {Negamax.Counter}");
+                //Debug.Log($"Column Selected {column} : Nodes = {Negamax.Counter}");
                 Negamax.Counter = 0;
 
                 break;
 
             case Algorithms.NegamaxAB:
                 column = NegamaxAB.CallNegamaxAB(TheBoard).Key;
-                Debug.Log($"Column Selected {column} : Nodes = {NegamaxAB.Counter}");
+                //Debug.Log($"Column Selected {column} : Nodes = {NegamaxAB.Counter}");
                 NegamaxAB.Counter = 0;
 
                 break;
 
             case Algorithms.Aspirational:
                 column = Aspirational.CallAspirationalSearch(TheBoard);
-                Debug.Log($"Column Selected {column} : Nodes = {NegamaxAB.Counter}");
+                //Debug.Log($"Column Selected {column} : Nodes = {NegamaxAB.Counter}");
                 NegamaxAB.Counter = 0;
 
                 break;
 
             case Algorithms.NegaScout:
                 column = NegaScout.CallNegaScout(TheBoard, algorithmDepth);
-                Debug.Log($"Column Selected {column} : Nodes = {NegaScout.Counter}");
+                //Debug.Log($"Column Selected {column} : Nodes = {NegaScout.Counter}");
                 NegaScout.Counter = 0;
 
                 break;
         }
 
         return column;
+    }
+
+    private void NegamaxShowStats()
+    {
+        int totalNodes = 0;
+        foreach (int nodes in Negamax.expandedNodes)
+            totalNodes += nodes;
+
+        int nodeAverage = totalNodes / Negamax.expandedNodes.Count;
+        Debug.Log("Average nodes expanded: " + nodeAverage);
+
+        int maxNode = Negamax.expandedNodes.Max();
+        Debug.Log("Max nodes expanded: " + maxNode);
+
+        int minNode = Negamax.expandedNodes.Min();
+        Debug.Log("Min nodes expanded: " + minNode);
+
+        double totalTimings = 0;
+        foreach (double timers in Negamax.executionTimings)
+            totalTimings += timers;
+
+        double timeAverage = totalTimings / Negamax.executionTimings.Count;
+        Debug.Log("Average time: " + timeAverage);
+
+        double maxTimer = Negamax.executionTimings.Max();
+        Debug.Log("Higher time: " + maxTimer);
+
+        double minTimer = Negamax.executionTimings.Min();
+        Debug.Log("Lower time: " + minTimer);
+
+        ShowWinners();
+    }
+    private void NegamaxABShowStats()
+    {
+        int totalNodes = 0;
+        foreach (int nodes in NegamaxAB.expandedNodes)
+            totalNodes += nodes;
+
+        int nodeAverage = totalNodes / NegamaxAB.expandedNodes.Count;
+        Debug.Log("Average nodes expanded: " + nodeAverage);
+
+        int maxNode = NegamaxAB.expandedNodes.Max();
+        Debug.Log("Max nodes expanded: " + maxNode);
+
+        int minNode = NegamaxAB.expandedNodes.Min();
+        Debug.Log("Min nodes expanded: " + minNode);
+
+        double totalTimings = 0;
+        foreach (double timers in NegamaxAB.executionTimings)
+            totalTimings += timers;
+
+        double timeAverage = totalTimings / NegamaxAB.executionTimings.Count;
+        Debug.Log("Average time: " + timeAverage);
+
+        double maxTimer = NegamaxAB.executionTimings.Max();
+        Debug.Log("Higher time: " + maxTimer);
+
+        double minTimer = NegamaxAB.executionTimings.Min();
+        Debug.Log("Lower time: " + minTimer);
+
+        ShowWinners();
+    }
+
+    private void AspirationalSearchStats()
+    {
+        int totalNodes = 0;
+        foreach (int nodes in NegamaxAB.expandedNodes)
+            totalNodes += nodes;
+
+        int nodeAverage = totalNodes / NegamaxAB.expandedNodes.Count;
+        Debug.Log("Average nodes expanded: " + nodeAverage);
+
+        int maxNode = NegamaxAB.expandedNodes.Max();
+        Debug.Log("Max nodes expanded: " + maxNode);
+
+        int minNode = NegamaxAB.expandedNodes.Min();
+        Debug.Log("Min nodes expanded: " + minNode);
+
+        double totalTimings = 0;
+        foreach (double timers in Aspirational.executionTimings)
+            totalTimings += timers;
+
+        double timeAverage = totalTimings / Aspirational.executionTimings.Count;
+        Debug.Log("Average time: " + timeAverage);
+
+        double maxTimer = Aspirational.executionTimings.Max();
+        Debug.Log("Higher time: " + maxTimer);
+
+        double minTimer = Aspirational.executionTimings.Min();
+        Debug.Log("Lower time: " + minTimer);
+
+        ShowWinners();
+    }
+
+    private void NegaScoutShowStats()
+    {
+        int totalNodes = 0;
+        foreach (int nodes in NegaScout.expandedNodes)
+            totalNodes += nodes;
+
+        int nodeAverage = totalNodes / NegaScout.expandedNodes.Count;
+        Debug.Log("Average nodes expanded: " + nodeAverage);
+
+        int maxNode = NegaScout.expandedNodes.Max();
+        Debug.Log("Max nodes expanded: " + maxNode);
+
+        int minNode = NegaScout.expandedNodes.Min();
+        Debug.Log("Min nodes expanded: " + minNode);
+
+        double totalTimings = 0;
+        foreach (double timers in NegaScout.executionTimings)
+            totalTimings += timers;
+
+        double timeAverage = totalTimings / NegaScout.executionTimings.Count;
+        Debug.Log("Average time: " + timeAverage);
+
+        double maxTimer = NegaScout.executionTimings.Max();
+        Debug.Log("Higher time: " + maxTimer);
+
+        double minTimer = NegaScout.executionTimings.Min();
+        Debug.Log("Lower time: " + minTimer);
+
+        ShowWinners();
+    }
+
+    private void ShowWinners()
+    {
+        Debug.Log("Max wins: " + maxWins + ". Min wins: " + minWins + ". Ties: " + ties);
     }
 }
 

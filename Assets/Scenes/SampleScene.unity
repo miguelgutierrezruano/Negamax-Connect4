@@ -891,10 +891,10 @@ MonoBehaviour:
   TurnText: {fileID: 1261027344}
   Result: {fileID: 819642940}
   Buttons: {fileID: 499369692}
-  maxAlgorithm: 2
-  minAlgorithm: 0
+  maxAlgorithm: 1
+  minAlgorithm: 1
   gameMode: 0
-  gamesToPlay: 0
+  gamesToPlay: 10
 --- !u!4 &671624168
 Transform:
   m_ObjectHideFlags: 0

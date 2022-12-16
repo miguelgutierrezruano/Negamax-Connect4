@@ -9,8 +9,13 @@ public class NegaScout : MonoBehaviour
 
     public static int Counter = 0;
 
+    public static List<int> expandedNodes = new List<int>();
+    public static List<double> executionTimings = new List<double>();
+
     public static int CallNegaScout(Board board, uint maxDepth)
     {
+        double chrono = Time.realtimeSinceStartup;
+
         GameState initState = new GameState(board, 0);
 
         int alpha = MINUS_INFINITE;
@@ -37,6 +42,11 @@ public class NegaScout : MonoBehaviour
             if (candValue > alpha)
                 alpha = candValue;
         }
+
+        double elapsedTime = Time.realtimeSinceStartup - chrono;
+
+        expandedNodes.Add(Counter);
+        executionTimings.Add(elapsedTime);
 
         // Return action to execute
         return NegamaxAB.GetBestPair(evaluatedActions).Key;

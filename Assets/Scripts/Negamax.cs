@@ -6,9 +6,13 @@ using System.Linq;
 public class Negamax
 {
     public static int Counter = 0;
+    public static List<int> expandedNodes = new List<int>();
+    public static List<double> executionTimings = new List<double>();
 
     public static int CallNegamax(Board board)
     {
+        double chrono = Time.realtimeSinceStartup;
+
         GameState initState = new GameState(board, 0);
 
         // Expand node
@@ -28,6 +32,11 @@ public class Negamax
             int candValue = -NegamaxValue(cand);
             evaluatedActions.Add(i, candValue);
         }
+
+        double elapsedTime = Time.realtimeSinceStartup - chrono;
+
+        expandedNodes.Add(Counter);
+        executionTimings.Add(elapsedTime);
 
         // Return action to execute
         int bestAction = evaluatedActions.FirstOrDefault(x => x.Value == evaluatedActions.Values.Max()).Key;

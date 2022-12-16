@@ -5,14 +5,18 @@ using UnityEngine;
 public class Aspirational : MonoBehaviour
 {
     // Algorithm can only be called from one team since its static
-    static int previousScore =  0;
-    static int windowRange   = 20;
+    public static int previousScore =  0;
+    static int windowRange   = 40;
 
     private const int INFINITE = int.MaxValue;
     private const int MINUS_INFINITE = int.MinValue;
 
+    public static List<double> executionTimings = new List<double>();
+
     public static int CallAspirationalSearch(Board board)
     {
+        double chrono = Time.realtimeSinceStartup;
+
         int alpha = MINUS_INFINITE;
         int beta = INFINITE;
         KeyValuePair<int, int> playValuePair;
@@ -40,6 +44,9 @@ public class Aspirational : MonoBehaviour
             playValuePair = NegamaxAB.CallNegamaxAB(board);
             previousScore = playValuePair.Value;
         }
+
+        double elapsedTime = Time.realtimeSinceStartup - chrono;
+        executionTimings.Add(elapsedTime);
 
         return playValuePair.Key;
     }

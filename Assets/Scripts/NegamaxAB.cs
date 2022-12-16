@@ -10,8 +10,13 @@ public class NegamaxAB : MonoBehaviour
     private const int INFINITE = int.MaxValue;
     private const int MINUS_INFINITE = int.MinValue;
 
+    public static List<int> expandedNodes = new List<int>();
+    public static List<double> executionTimings = new List<double>();
+
     public static KeyValuePair<int, int> CallNegamaxAB(Board board, int alpha = MINUS_INFINITE, int beta = INFINITE)
     {
+        double chrono = Time.realtimeSinceStartup;
+
         GameState initState = new GameState(board, 0);
 
         // Expand node
@@ -35,6 +40,11 @@ public class NegamaxAB : MonoBehaviour
             if (candValue > alpha)
                 alpha = candValue;
         }
+
+        double elapsedTime = Time.realtimeSinceStartup - chrono;
+
+        expandedNodes.Add(Counter);
+        executionTimings.Add(elapsedTime);
 
         // Return action to execute
         return GetBestPair(evaluatedActions);
